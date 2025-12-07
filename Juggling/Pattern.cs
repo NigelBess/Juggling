@@ -108,7 +108,7 @@ public class Pattern
                 return false;
             }
             errorMessage = null;
-            newState = action.HandIndex;
+            newState = null;
             return true;
         }
         errorMessage = SoftwareBug.Msg($"Invalid action type {actionType}");
