@@ -4,4 +4,5 @@
   </Folder>
   <Project Path="Juggling/Juggling.csproj" />
   <Project Path="JugglingTest/JugglingTest.csproj" />
+  <Project Path="Visualizer2D/Visualizer2D.csproj" Id="b12c70c8-6e3d-41d5-9058-f824a9e56a97" />
 </Solution>

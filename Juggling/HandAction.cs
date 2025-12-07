@@ -1,9 +1,10 @@
-﻿namespace Juggling;
+﻿using System.Numerics;
+
+namespace Juggling;
 
 public class HandAction
 {
-    public required double X { get; init; }
-    public required double Y { get; init; }
+    public required Vector2 Position { get; init; }
     /// <summary>
     /// The ball being caught or thrown. If the hand is just moving, <see cref="Ball"/> will be ignored (even if the hand currently contains a ball)
     /// </summary>
