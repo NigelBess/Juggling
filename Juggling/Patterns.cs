@@ -8,7 +8,7 @@ public static class Patterns
     private static readonly Vector2 li = new(-25, 0);
     private static readonly Vector2 ro = new(75, 0);
     private static readonly Vector2 ri = new(25, 0);
-    public static Pattern IO3() => new()
+    public static Pattern Io3() => new()
     {
         Hands = new() {
             new() {
@@ -34,7 +34,7 @@ public static class Patterns
         }
     };
 
-    public static Pattern IO5() => new()
+    public static Pattern Io5() => new()
     {
         Hands = new() {
             new() {
@@ -67,4 +67,38 @@ public static class Patterns
             }
         }
     };
+
+    public static Pattern Io(int n)
+    {
+        var leftActions = new HandAction?[2 * n];
+        var rightActions = new HandAction?[2 * n];
+        var shift = (n + 1) / 2; // ceil(n/2)
+
+        for (var i = 0; i < n; i++)
+        {
+            // Left hand: Throw(li, i), then Catch(lo, i+1 mod n)
+            leftActions[2 * i] = HandAction.Throw(li, i);
+            leftActions[2 * i + 1] = HandAction.Catch(lo, (i + 1) % n);
+
+            // Right hand: Catch/Throw in rotated ball order, starting with middle index ball
+            var ball = (i + shift) % n;
+            rightActions[2 * i] = HandAction.Catch(ro, ball);
+            rightActions[2 * i + 1] = HandAction.Throw(ri, ball);
+        }
+
+        return new()
+        {
+            Hands = new()
+        {
+            new()
+            {
+                Actions = leftActions
+            },
+            new()
+            {
+                Actions = rightActions
+            }
+        }
+        };
+    }
 }

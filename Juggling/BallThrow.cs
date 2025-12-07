@@ -11,7 +11,7 @@ public class BallThrow
     /// </summary>
     private bool IsAroundTheCorner => Catch.FrameIndex < Throw.FrameIndex;
 
-    private int FrameCount
+    public int FrameCount
     {
         get
         {

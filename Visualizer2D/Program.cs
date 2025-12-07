@@ -21,7 +21,7 @@ public static class Program
     private static Vector2 ToRaylibPos(Vector2 originalPos) => originalPos + _screenDims / 2;
     public static void Main()
     {
-        var pattern = Patterns.IO5();
+        var pattern = Patterns.Io(5);
         var throws = pattern.GenerateThrows().ToList();
         var gravityFrames = gravitySeconds * secondsPerFrame * secondsPerFrame;
         var throwSolutions = throws.ToDictionary(t => t, elementSelector: t => t.GenerateSolution(gravityFrames));
