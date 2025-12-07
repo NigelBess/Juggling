@@ -23,7 +23,7 @@ public class ThrowSolution
     /// <summary>
     /// 
     /// </summary>
-    public required Vector2 EndPosition { get; init; }
+    public Vector2 EndPosition => GetPosition(Time);
     /// <summary>
     /// Velocity in distance units per frame
     /// </summary>

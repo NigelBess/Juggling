@@ -52,7 +52,7 @@ public class BallThrow
         var throwPos = Throw.Position;
         var positionChange = catchPos - throwPos;
         var time = (float)FrameCount;
-        var verticalInitialVelocity = (catchPos.Y - throwPos.Y + gravity * time * time / 2) / time;
+        var verticalInitialVelocity = (catchPos.Y - throwPos.Y - gravity * time * time / 2) / time;
         var horizontalInitialVelocity = (catchPos.X - throwPos.X) / time;
 
         return new()
@@ -61,7 +61,6 @@ public class BallThrow
             Time = FrameCount,
             StartVelocity = new(x: horizontalInitialVelocity, y: (float)verticalInitialVelocity),
             StartPosition = throwPos,
-            EndPosition = catchPos,
         };
     }
 
