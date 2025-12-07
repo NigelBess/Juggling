@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 
 namespace Juggling;
 
@@ -244,6 +245,31 @@ public class Pattern
                 break;
             }
         }
+    }
+
+    public void PopulateAllMotion(float gravityDistancePerFrameSquared)
+    {
+        foreach (var ballThrow in GenerateThrows())
+        {
+            ballThrow.PopulateSolution(gravityDistancePerFrameSquared);
+            foreach (var action in ballThrow.Actions) action.PopulatedThrow = ballThrow;
+        }
+
+        foreach (var action in AllActions)
+        {
+            if (action.ActionType.IsCatchOrThrow())
+            {
+                var sln = action.PopulatedThrow
+                action.PopulatedMotion = new(action.PopulatedThrow!.PopulatedSolution;
+            }
+            action.PopulatedMotion = action.ActionType switch
+            {
+                HandActionType.Move => new() { Position = action.Position, Velocity = Vector2.Zero },
+                HandActionType.Throw => new() { Position = action.PopulatedThrow!.PopulatedSolution!.StartPosition, Velocity = action.PopulatedThrow!.PopulatedSolution!.StartVelocity },
+                HandActionType.Catch => new() { Position = action.PopulatedThrow!.PopulatedSolution!.EndPosition, Velocity = action.PopulatedThrow!.PopulatedSolution!.EndVelocity },
+                _ => throw new NotImplementedException($"Unable to determine motion endpoint for action type {action.ActionType}")
+            };
+        }
 
     }
 
@@ -254,4 +280,6 @@ public class Pattern
             Hands = hands.Select(h => HandPattern.FromActions(h)).ToList()
         };
     }
+
+
 }

@@ -6,7 +6,7 @@ public static class Program
 
     public static void Main()
     {
-        var pattern = Patterns.StandardOddBallPattern(4);
+        var pattern = Patterns.DoubleMill();
         var visualization = new PatternVisualization(pattern);
         visualization.Display();
     }

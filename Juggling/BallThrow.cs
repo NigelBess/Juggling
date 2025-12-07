@@ -11,6 +11,9 @@ public class BallThrow
     /// </summary>
     private bool IsAroundTheCorner => Catch.FrameIndex < Throw.FrameIndex;
 
+    public ThrowSolution? PopulatedSolution { get; set; }
+
+    public IEnumerable<HandAction> Actions => [Throw, Catch];
     public int FrameCount
     {
         get
@@ -43,4 +46,6 @@ public class BallThrow
     }
 
     public ThrowSolution ComputeSolution(float gravityDistancePerFrameSquared) => new(this, gravityDistancePerFrameSquared);
+
+    public void PopulateSolution(float gravityDistancePerFrameSquared) => PopulatedSolution = ComputeSolution(gravityDistancePerFrameSquared);
 }

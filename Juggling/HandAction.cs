@@ -9,6 +9,8 @@ public class HandAction
     /// The ball being caught or thrown. If the hand is just moving, <see cref="Ball"/> will be ignored (even if the hand currently contains a ball)
     /// </summary>
     public int? Ball { get; init; }
+    public HandMotionEndpoint? PopulatedMotion { get; set; }
+    public BallThrow? PopulatedThrow { get; set; }
     private int? _frameIndex;
     public int FrameIndex
     {

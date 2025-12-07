@@ -1,13 +1,18 @@
 ﻿namespace Juggling;
 
-//public class HandMotion
-//{
-//    private float _a;
-//    private float _b;
-//    private float _c;
-//    public HandMotion(HandMotionEndpoint start, HandMotionEndpoint end)
-//    {
-//        // vertical motion:
-//        // y(t) = y_0 + (y_1 - y_0)*(a*s^5 + b*s^4 + c*s^3)
-//    }
-//}
+public class HandMotion
+{
+    private readonly MotionSolution _x;
+    private readonly MotionSolution _y;
+    public int DurationFrames { get; }
+    public HandMotionEndpoint Start { get; }
+    public HandMotionEndpoint End { get; }
+    public HandMotion(HandMotionEndpoint start, HandMotionEndpoint end, int durationFrames)
+    {
+        Start = start;
+        End = end;
+        DurationFrames = durationFrames;
+        _x = MotionSolution.FromMotionEndpoints(start, end, v => v.X, durationFrames);
+        _y = MotionSolution.FromMotionEndpoints(start, end, v => v.Y, durationFrames);
+    }
+}

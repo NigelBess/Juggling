@@ -1,4 +1,6 @@
-﻿namespace Juggling;
+﻿using System.Numerics;
+
+namespace Juggling;
 
 public static class Patterns
 {
@@ -24,6 +26,59 @@ public static class Patterns
         var leftActions = SingleHand(halfN, layout.Left);
         var rightActions = SingleHand(halfN, layout.Right, ballOffset: halfN).Shift(offset);
         return Pattern.FromHands(leftActions, rightActions);
+    }
+
+    public static Pattern Tennis(Standard2HandLayout? layout = null, float outerBallAdditionalOffset = 60, float outerBallYOffset = 50)
+    {
+        layout ??= Standard2HandLayout.Io(20, 60);
+        var (lo, li, ri, ro) = layout.SplitAsIo();
+        var loo = lo + new Vector2(-outerBallAdditionalOffset, outerBallYOffset);
+        var roo = ro + new Vector2(outerBallAdditionalOffset);
+        HandAction?[] left =
+            [
+                HandAction.Catch(loo,0),
+                HandAction.Throw(loo,0),
+                HandAction.Catch(lo,1),
+                HandAction.Throw(li,1),
+                HandAction.Catch(lo,2),
+                HandAction.Throw(li,2),
+            ];
+        HandAction?[] right =
+            [
+                HandAction.Throw(ri,1),
+                HandAction.Catch(ro,2),
+                HandAction.Throw(ri,2),
+                HandAction.Catch(roo,0),
+                HandAction.Throw(roo,0),
+                HandAction.Catch(ri,1),
+            ];
+        return Pattern.FromHands(left, right);
+    }
+
+    public static Pattern DoubleMill(Standard2HandLayout? layout = null)
+    {
+        layout ??= Standard2HandLayout.Io();
+        var (lo, li, ri, ro) = layout.SplitAsIo();
+        HandAction?[] left =
+            [
+                HandAction.Catch(li,0),
+                HandAction.Throw(lo,0),
+                HandAction.Catch(li,1),
+                HandAction.Throw(lo,1),
+                HandAction.Catch(ri,2),
+                HandAction.Throw(ro,2),
+            ];
+        HandAction?[] right =
+            [
+                HandAction.Throw(ro,1),
+                HandAction.Catch(li,2),
+                HandAction.Throw(lo,2),
+                HandAction.Catch(ri,0),
+                HandAction.Throw(ro,0),
+                HandAction.Catch(ri,1),
+
+            ];
+        return Pattern.FromHands(left, right);
     }
 
     public static Pattern SingleHandPattern(int n) => Pattern.FromHands(SingleHand(n, Standard1HandLayout.Flat()));

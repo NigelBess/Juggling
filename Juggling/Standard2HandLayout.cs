@@ -1,4 +1,6 @@
-﻿namespace Juggling;
+﻿using System.Numerics;
+
+namespace Juggling;
 
 public class Standard2HandLayout
 {
@@ -13,4 +15,8 @@ public class Standard2HandLayout
     }
 
     public static Standard2HandLayout Io(float innerOffset = 25, float outerOffset = 75) => Oi(innerOffset: outerOffset, outerOffset: innerOffset);
+    public (Vector2 LeftCatch, Vector2 LeftThrow, Vector2 RightThrow, Vector2 RightCatch) SplitAsIo()
+    {
+        return (Left.CatchPos, Left.ThrowPos, Right.ThrowPos, Right.CatchPos);
+    }
 }
