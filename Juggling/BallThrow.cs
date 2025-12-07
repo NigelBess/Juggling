@@ -17,7 +17,7 @@ public class BallThrow
         {
             if (IsAroundTheCorner)
             {
-                return (LoopFrameCount - Throw.FrameIndex) + Catch.FrameIndex + 1;
+                return (LoopFrameCount - Throw.FrameIndex) + Catch.FrameIndex;
             }
             return (Catch.FrameIndex - Throw.FrameIndex);
         }
