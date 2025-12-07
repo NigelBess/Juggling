@@ -40,4 +40,19 @@ public class ThrowSolution
         );
     }
 
+    public float MaxHeight()
+    {
+        // Time at which vertical velocity is zero
+        float tPeak = -StartVelocity.Y / Gravity;
+
+        // Clamp to the duration of the throw
+        float tClamped = MathF.Min(Time, MathF.Max(0f, tPeak));
+
+        float yStart = StartPosition.Y;
+        float yPeak = GetPosition(tClamped).Y;
+        float yEnd = GetPosition(Time).Y;
+
+        return MathF.Max(yStart, MathF.Max(yPeak, yEnd));
+    }
+
 }
