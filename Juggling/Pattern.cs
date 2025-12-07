@@ -29,14 +29,17 @@ public class Pattern
         if (!TryGetInitialState(out var initialState, out var error))
         {
             errorMessage = error;
+            states = null;
             return false;
         }
-        var states = new List<RoughState>
+        states = new List<RoughState>();
 
         foreach (var frameActions in Frames())
         {
 
         }
+        errorMessage = null;
+        return true;
     }
 
     public IEnumerable<List<HandAction?>> Frames()
@@ -113,6 +116,6 @@ public class Pattern
 
     private HashSet<int> AllBalls()
     {
-        return Hands.SelectMany(h => h.Actions.Select(a => a.Ball).Where(b => b is not null).Select(b => b!.Value)).ToHashSet();
+        return Hands.SelectMany(h => h.Actions.WhereNotNull().Select(a => a.Ball).WhereNotNull()).ToHashSet();
     }
 }
