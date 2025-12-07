@@ -14,6 +14,7 @@ public class PatternVisualization
     private readonly int _ballSize;
     private readonly Vector2 _worldToScreenOffset;
     private readonly float _scaleModifier;
+    private const int pixelBuffer = 25;
     private Dictionary<int, Color> _ballColors = new() {
             { 0, Color.Red},
             { 1, Color.Green},
@@ -50,7 +51,7 @@ public class PatternVisualization
         var (xRange, yRange) = GenerateBoundingRectangle(throws);
         var dims = _screenDims;
 
-        scaleModifier = Math.Min(dims.X / xRange.Width, dims.Y / yRange.Width);
+        scaleModifier = Math.Min(dims.X / (xRange.Width + pixelBuffer), dims.Y / (yRange.Width + pixelBuffer));
 
         var screenCenter = dims / 2;
         var centroid = new Vector2(xRange.Center, yRange.Center) * scaleModifier;
@@ -63,7 +64,7 @@ public class PatternVisualization
         {
             var random = new Random();
             byte RandomByte() => (byte)random.Next(256);
-            color = Color.FromHSV(RandomByte(), 1, 1);
+            color = new(RandomByte(), RandomByte(), RandomByte());
             _ballColors[n] = color;
         }
         return color;

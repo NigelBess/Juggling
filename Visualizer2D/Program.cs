@@ -6,7 +6,7 @@ public static class Program
 
     public static void Main()
     {
-        var pattern = Patterns.Io(11);
+        var pattern = Patterns.Io(101);
         var visualization = new PatternVisualization(pattern);
         visualization.Display();
     }
