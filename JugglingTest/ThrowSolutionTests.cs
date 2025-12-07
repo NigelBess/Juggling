@@ -26,7 +26,7 @@ public class ThrowSolutionTests
     public void TestPositionAtCatchAndThrow()
     {
         var ballThrow = GenerateOneBallToss();
-        var solution = ballThrow.ComputeSolution(10);
+        var solution = ballThrow.ComputeSolution(-10);
         var throwPos = solution.GetPosition(0);
         TestHelpers.AssertV2Equality(throwPos, ballThrow.Throw.Position, "Start");
         TestHelpers.AssertV2Equality(solution.EndPosition, ballThrow.Catch.Position, "End");
@@ -36,7 +36,12 @@ public class ThrowSolutionTests
     public void TestSignErrors()
     {
         var ballThrow = GenerateOneBallToss();
-        var solution = ballThrow.ComputeSolution(10);
+        var solution = ballThrow.ComputeSolution(-10);
+        var zenith = solution.Zenith.Y;
+        Assert.IsGreaterThan(0, zenith);
+        var range = solution.YRange();
+        Assert.AreEqual(0, range.Min);
+        Assert.AreEqual(zenith, range.Max);
 
     }
 }

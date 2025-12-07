@@ -5,8 +5,8 @@ namespace Juggling;
 public class ThrowSolution
 {
     /// <summary>
-    /// Gravitational acceleration in distance units per frame^2
-    /// Negative is in the down direction.
+    /// Gravitational acceleration in distance units per frame^2 <br/>
+    /// Signed. (downward gravity is negative.)
     /// </summary>
     public float Gravity { get; }
     /// <summary>
@@ -37,7 +37,7 @@ public class ThrowSolution
     {
         return new Vector2(
             StartPosition.X + StartVelocity.X * localFrame,                       // x(t) = x0 + vx0 * t
-            StartPosition.Y - StartVelocity.Y * localFrame + 0.5f * Gravity * localFrame * localFrame     // y(t) = y0 + vy0 * t + 0.5 * a * t^2
+            StartPosition.Y + StartVelocity.Y * localFrame + 0.5f * Gravity * localFrame * localFrame     // y(t) = y0 + vy0 * t + 0.5 * a * t^2
         );
     }
 
@@ -46,7 +46,7 @@ public class ThrowSolution
         get
         {
             // Time at which vertical velocity is zero
-            float zenithTime = StartVelocity.Y / Gravity;
+            float zenithTime = -StartVelocity.Y / Gravity;
 
             // Clamp to the duration of the throw
             zenithTime = MathF.Min(Time, MathF.Max(0f, zenithTime));
@@ -66,7 +66,7 @@ public class ThrowSolution
         var positionChange = catchPos - throwPos;
         var frameCount = ballThrow.FrameCount;
         var time = (float)frameCount;
-        var verticalInitialVelocity = (catchPos.Y - throwPos.Y + gravityDistancePerFrameSquared * time * time / 2) / time;
+        var verticalInitialVelocity = (catchPos.Y - throwPos.Y - gravityDistancePerFrameSquared * time * time / 2) / time;
         var horizontalInitialVelocity = (catchPos.X - throwPos.X) / time;
         Gravity = gravityDistancePerFrameSquared;
         Time = frameCount;

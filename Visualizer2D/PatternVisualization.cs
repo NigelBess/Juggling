@@ -13,7 +13,7 @@ public class PatternVisualization
     private readonly float _secondsPerFrame;
     private readonly int _ballSize;
     private readonly Vector2 _worldToScreenOffset;
-    private readonly Vector2 _scaleModifier;
+    private readonly float _scaleModifier;
     private Dictionary<int, Color> _ballColors = new() {
             { 0, Color.Red},
             { 1, Color.Green},
@@ -24,14 +24,14 @@ public class PatternVisualization
             { 6, Color.White},
             { 7, Color.Beige},
         };
-    public PatternVisualization(Pattern pattern, Vector2? screenDims = null, float dtSeconds = 0.01f, float secondsPerFrame = 0.5f, int ballSize = 10, float gravityPixelPerSecondSquared = 900)
+    public PatternVisualization(Pattern pattern, Vector2? screenDims = null, float dtSeconds = 0.01f, float secondsPerFrame = 0.5f, int ballSize = 10, float gravityPixelPerSecondSquared = -900)
     {
         _pattern = pattern;
         var throws = pattern.GenerateThrows().ToList();
         var gravityPixelPerFramesSquared = gravityPixelPerSecondSquared * secondsPerFrame * secondsPerFrame;
         var throwSolutions = throws.ToDictionary(t => t, elementSelector: t => t.ComputeSolution(gravityPixelPerFramesSquared));
         _throwSolutions = throwSolutions;
-        _screenDims = screenDims ?? new(600, 1000);
+        _screenDims = screenDims ?? new(1000, 1000);
         _dtSeconds = dtSeconds;
         _secondsPerFrame = secondsPerFrame;
         _ballSize = ballSize;
@@ -45,22 +45,29 @@ public class PatternVisualization
         var throwYs = throws.SelectMany(t => t.YRange().Extremes());
         return (new(throwXs), new(throwYs));
     }
-    private void ComputeScreenTransformation(IEnumerable<ThrowSolution> throws, out Vector2 scaleModifier, out Vector2 worldToScreenOffset)
+    private void ComputeScreenTransformation(IEnumerable<ThrowSolution> throws, out float scaleModifier, out Vector2 worldToScreenOffset)
     {
         var (xRange, yRange) = GenerateBoundingRectangle(throws);
         var dims = _screenDims;
+
+        scaleModifier = Math.Min(dims.X / xRange.Width, dims.Y / yRange.Width);
+
         var screenCenter = dims / 2;
-        var centroid = new Vector2(xRange.Center(), yRange.Center());
-        worldToScreenOffset = screenCenter - centroid;
-        scaleModifier = new(dims.X / xRange.Width(), dims.Y / xRange.Width());
+        var centroid = new Vector2(xRange.Center, yRange.Center) * scaleModifier;
+        worldToScreenOffset = screenCenter + centroid;
     }
-    private Vector2 ToRaylibPos(Vector2 originalPos) => originalPos * _scaleModifier + _worldToScreenOffset;
+    private Vector2 ToRaylibPos(Vector2 originalPos) => -originalPos * _scaleModifier + _worldToScreenOffset;
     private Color GetBallColor(int n)
     {
-        if (_ballColors.TryGetValue(n, out var color)) return color;
-        var random = new Random();
-        byte RandomByte() => (byte)random.Next(256);
-        return Color.FromHSV(RandomByte(), 1, 1);
+        if (!_ballColors.TryGetValue(n, out var color))
+        {
+            var random = new Random();
+            byte RandomByte() => (byte)random.Next(256);
+            color = Color.FromHSV(RandomByte(), 1, 1);
+            _ballColors[n] = color;
+        }
+        return color;
+
     }
     public void Display()
     {
