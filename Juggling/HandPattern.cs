@@ -34,4 +34,8 @@ public class HandPattern
             action.FrameIndex = idx;
         }
     }
+
+    public static implicit operator HandPattern(HandAction?[] actions) =>
+    new() { Actions = actions };
+    public static HandPattern FromActions(IEnumerable<HandAction?> actions) => new() { Actions = actions.ToArray() };
 }

@@ -20,4 +20,13 @@ public class PatternsTest
         Assert.HasCount(n * 2, throws);
 
     }
+    [TestMethod]
+    [DataRow(3, 5)]
+    public void TestIoHeight(int n, float expectedHeight)
+    {
+        var pattern = Patterns.Io(n);
+        var throws = pattern.GenerateThrows();
+        var height = throws.First().ComputeSolution(-10).Zenith.Y;
+        Assert.AreEqual(expectedHeight, height);
+    }
 }

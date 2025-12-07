@@ -90,4 +90,14 @@ public static class Extension
         first = default(T?);
         return false;
     }
+
+    public static T[] Shift<T>(this T[] arr, int rightShift)
+    {
+        var len = arr.Length;
+        var result = new T[len];
+        var shift = ((rightShift % len) + len) % len;
+        for (int i = 0; i < len; i++)
+            result[(i + shift) % len] = arr[i];
+        return result;
+    }
 }

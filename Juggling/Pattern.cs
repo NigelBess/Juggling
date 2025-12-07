@@ -246,4 +246,12 @@ public class Pattern
         }
 
     }
+
+    public static Pattern FromHands(params IEnumerable<HandAction?>[] hands)
+    {
+        return new()
+        {
+            Hands = hands.Select(h => HandPattern.FromActions(h)).ToList()
+        };
+    }
 }
