@@ -5,6 +5,7 @@ public class BallThrow
     public required int LoopFrameCount { get; init; }
     public required HandAction Throw { get; init; }
     public required HandAction Catch { get; init; }
+    public int Ball => Throw.Ball!.Value;
     /// <summary>
     /// Does this throw start at the end of the loop with the catch at the beginning?
     /// </summary>
@@ -28,7 +29,7 @@ public class BallThrow
     /// Accounts for "around-the-corner" throws (over looped pattern boundaries) if applicable.<br/>
     /// Fractional frames are allowed <br/>
     /// </summary>
-    public double? GetLocalFrameIndex(float globalFrameIndex)
+    public float? GetLocalFrameIndex(float globalFrameIndex)
     {
         if (globalFrameIndex > Catch.FrameIndex && globalFrameIndex < Throw.FrameIndex) return null;
         if (IsAroundTheCorner)

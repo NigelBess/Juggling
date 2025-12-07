@@ -8,6 +8,7 @@
     ".NETCoreApp,Version=v10.0": {
       "Visualizer2D/1.0.0": {
         "dependencies": {
+          "Juggling": "1.0.0",
           "Raylib-cs": "7.0.2"
         },
         "runtime": {
@@ -48,6 +49,14 @@
             "fileVersion": "0.0.0.0"
           }
         }
+      },
+      "Juggling/1.0.0": {
+        "runtime": {
+          "Juggling.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
       }
     }
   },
@@ -63,6 +72,11 @@
       "sha512": "sha512-tpisH03Z9AfdTKFTe7iIA7RNeSaQFE97A+7ApXJUaOHzg2hczBXA1J/2uF7teKHsVXSuGqoV2aHAbaeJJMqulw==",
       "path": "raylib-cs/7.0.2",
       "hashPath": "raylib-cs.7.0.2.nupkg.sha512"
+    },
+    "Juggling/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
     }
   }
 }

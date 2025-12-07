@@ -2,7 +2,7 @@
 
 namespace Juggling;
 
-internal class ThrowSolution
+public class ThrowSolution
 {
     /// <summary>
     /// Gravitational acceleration in distance units per frame^2
