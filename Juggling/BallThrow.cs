@@ -31,12 +31,14 @@ public class BallThrow
     /// </summary>
     public float? GetLocalFrameIndex(float globalFrameIndex)
     {
-        if (globalFrameIndex > Catch.FrameIndex && globalFrameIndex < Throw.FrameIndex) return null;
+
         if (IsAroundTheCorner)
         {
-            if (globalFrameIndex < Catch.FrameIndex) return LoopFrameCount - Throw.FrameIndex + globalFrameIndex + 1;
+            if (globalFrameIndex > Catch.FrameIndex && globalFrameIndex < Throw.FrameIndex) return null;
+            if (globalFrameIndex < Catch.FrameIndex) return LoopFrameCount - Throw.FrameIndex + globalFrameIndex;
             return globalFrameIndex - Throw.FrameIndex;
         }
+        if (globalFrameIndex > Catch.FrameIndex || globalFrameIndex < Throw.FrameIndex) return null;
         return globalFrameIndex - Throw.FrameIndex;
     }
 

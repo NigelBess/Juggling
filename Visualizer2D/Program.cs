@@ -12,11 +12,11 @@ public static class Program
     const float gravitySeconds = 90;
     private static Dictionary<int, Color> _ballColors = new() {
             { 0, Color.Red},
-            { 0, Color.Green},
-            { 0, Color.Blue},
-            { 0, Color.Yellow},
-            { 0, Color.Purple},
-            { 0, Color.Orange},
+            { 1, Color.Green},
+            { 2, Color.Blue},
+            { 3, Color.Yellow},
+            { 4, Color.Purple},
+            { 5, Color.Orange},
         };
     private static Pattern _pattern = new()
     {
@@ -34,7 +34,7 @@ public static class Program
     private static Vector2 ToRaylibPos(Vector2 originalPos) => originalPos + _screenDims / 2;
     public static void Main()
     {
-        var throws = _pattern.GenerateThrows();
+        var throws = _pattern.GenerateThrows().ToList();
         var gravityFrames = gravitySeconds * secondsPerFrame * secondsPerFrame;
         var throwSolutions = throws.ToDictionary(t => t, elementSelector: t => t.GenerateSolution(gravityFrames));
         Raylib.InitWindow((int)_screenDims.X, (int)_screenDims.Y, "Juggling");
@@ -58,7 +58,13 @@ public static class Program
                 var ballColor = _ballColors[ballThrow.Ball];
                 Raylib.DrawCircle((int)ballPos.X, (int)ballPos.Y, ballSize, Color.Red);
             }
-
+            Raylib.DrawText(
+                $"timeInFrames: {timeInFrames:F2}",
+                10,        // x
+                10,        // y
+                20,        // font size
+                Color.White
+            );
             Raylib.EndDrawing();
             Thread.Sleep(dtMs);
         }
