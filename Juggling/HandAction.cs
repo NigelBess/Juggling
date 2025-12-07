@@ -37,8 +37,10 @@ public class HandAction
     }
     public HandActionType ActionType { get; init; }
     private HandAction() { }
-    public static HandAction Catch(float x, float y, int ball) => new() { Position = new(x, y), ActionType = HandActionType.Catch, Ball = ball };
-    public static HandAction Throw(float x, float y, int ball) => new() { Position = new(x, y), ActionType = HandActionType.Throw, Ball = ball };
+    public static HandAction Catch(float x, float y, int ball) => Catch(new(x, y), ball);
+    public static HandAction Throw(float x, float y, int ball) => Throw(new(x, y), ball);
+    public static HandAction Catch(Vector2 pos, int ball) => new() { Position = pos, ActionType = HandActionType.Catch, Ball = ball };
+    public static HandAction Throw(Vector2 pos, int ball) => new() { Position = pos, ActionType = HandActionType.Throw, Ball = ball };
 
 }
 
