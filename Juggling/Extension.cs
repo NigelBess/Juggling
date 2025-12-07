@@ -100,4 +100,7 @@ public static class Extension
             result[(i + shift) % len] = arr[i];
         return result;
     }
+
+    public static bool IsEven(this int n) => n % 2 == 0;
+    public static bool IsOdd(this int n) => !n.IsEven();
 }

@@ -13,7 +13,7 @@ public class PatternsTest
     [DataRow(13)]
     public void TestIo(int n)
     {
-        var pattern = Patterns.Io(n);
+        var pattern = Patterns.StandardOddBallPattern(n);
         var throws = pattern.GenerateThrows();
         var throwLengths = throws.Select(t => t.FrameCount).ToHashSet();
         Assert.HasCount(1, throwLengths); // all throws have the same length
@@ -24,7 +24,7 @@ public class PatternsTest
     [DataRow(3, 5)]
     public void TestIoHeight(int n, float expectedHeight)
     {
-        var pattern = Patterns.Io(n);
+        var pattern = Patterns.StandardOddBallPattern(n);
         var throws = pattern.GenerateThrows();
         var height = throws.First().ComputeSolution(-10).Zenith.Y;
         Assert.AreEqual(expectedHeight, height);
