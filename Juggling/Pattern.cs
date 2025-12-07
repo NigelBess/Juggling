@@ -63,9 +63,9 @@ public class Pattern
         }
 
         // Finally, we need to make sure the ending state matches the initial state
-        if (states.Last() != states.First())
+        if (!states.Last().Equals(states.First()))
         {
-            errorMessage = "Ending state did not equal the starting state";
+            errorMessage = $"Ending state did not equal the starting state: initial: {states.First()}. ending: {states.Last()}";
             return false;
         }
         errorMessage = null;

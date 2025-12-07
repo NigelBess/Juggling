@@ -39,5 +39,8 @@ public class RoughState
 
         return hash;
     }
+    public override string ToString() => BallStates
+    .Select(kvp => $"{{Ball{kvp.Key}:{(kvp.Value is null ? "Air" : kvp.Value)}}}")
+    .ToCollectionString();
 
 }
