@@ -270,8 +270,9 @@ public class Pattern
                 _ => throw new NotImplementedException($"Unable to determine motion endpoint for action type {action.ActionType}")
             };
         }
-
     }
+
+    pub
 
     public static Pattern FromHands(params IEnumerable<HandAction?>[] hands)
     {
