@@ -1,0 +1,7 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
+  <Project Path="Juggling/Juggling.csproj" />
+  <Project Path="JugglingTest/JugglingTest.csproj" />
+</Solution>
