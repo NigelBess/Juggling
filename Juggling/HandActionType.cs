@@ -10,5 +10,5 @@ public enum HandActionType
 
 public static class HandActionTypeExtensions
 {
-
+    public static bool RequiresSpecifiedBall(this HandActionType action) => action == HandActionType.Throw || action == HandActionType.Catch;
 }
