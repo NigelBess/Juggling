@@ -16,6 +16,14 @@ public static class Patterns
         return Pattern.FromHands(leftActions, rightActions);
     }
 
+    public static Pattern Oi(int n)
+    {
+        var leftActions = SingleHandIoPattern(n, li, lo);
+        var rightActions = SingleHandIoPattern(n, ri, ro).Shift(n);
+        return Pattern.FromHands(leftActions, rightActions);
+    }
+
+
 
 
     private static HandAction[] SingleHandIoPattern(int n, Vector2 catchPosition, Vector2 throwPosition)
