@@ -6,14 +6,27 @@ namespace JugglingTest;
 public sealed class PatternTests
 {
     [TestMethod]
-    [DynamicData(nameof(GetPatterns))]
+    public void ValidPattern1_IsValid() => TestSingleHandPatternValidity(ValidPattern1(), true);
+
+    [TestMethod]
+    public void ValidPattern2_IsValid() => TestSingleHandPatternValidity(ValidPattern2(), true);
+
+    [TestMethod]
+    public void InvalidPattern1_IsInvalid() => TestSingleHandPatternValidity(InvalidPattern1(), false);
+
+    [TestMethod]
+    public void InvalidPattern2_IsInvalid() => TestSingleHandPatternValidity(InvalidPattern2(), false);
+
+    [TestMethod]
+    public void InvalidPattern3_IsInvalid() => TestSingleHandPatternValidity(InvalidPattern3(), false);
+
     public void TestSingleHandPatternValidity(HandPattern handPattern, bool expectedValid)
     {
         var pattern = new Pattern() { Hands = [handPattern] };
         Assert.AreEqual(expectedValid, pattern.TryGetStateSequence(out _, out var errorMessage), errorMessage);
     }
 
-    private static IEnumerable<object[]> GetPatterns()
+    public static IEnumerable<object[]> GetPatterns()
     {
         yield return new object[] { ValidPattern1(), true };
         yield return new object[] { ValidPattern2(), true };

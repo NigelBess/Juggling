@@ -36,7 +36,12 @@ public class Pattern
 
         foreach (var frameActions in Frames())
         {
-
+            var ballActionsThisFrame = GetInvolvedBallActions(frameActions);
+            if (!AreFrameActionsValid(ballActionsThisFrame, out errorMessage))
+            {
+                states = null;
+                return false;
+            }
         }
         errorMessage = null;
         return true;
@@ -71,6 +76,25 @@ public class Pattern
         }
     }
 
+    private bool TryValidateBallActions(Dictionary<int, List<HandAction>> ballActionsThisFrame, [NotNullWhen(returnValue: true)] out Dictionary<int, HandAction>? ballActions, [NotNullWhen(returnValue: false)] out string? errorMessage)
+    {
+        var singleActions = new Dictionary<int, HandAction>();
+        foreach (var (ball, actions) in ballActionsThisFrame)
+        {
+            var positionCount = actions.Count;
+            if (positionCount != 1)
+            {
+                errorMessage = $"Ball {ball} appeared in {actions.Count} different hands on frame {actions.First().FrameIndex}";
+                ballActions = null;
+                return false;
+            }
+            singleActions[ball] = actions.Single();
+        }
+        errorMessage = null;
+        ballActions = singleActions;
+        return true;
+    }
+
 
     private bool TryGetInitialState([NotNullWhen(returnValue: true)] out RoughState? state, [NotNullWhen(returnValue: false)] out string? errorMessage)
     {
@@ -80,15 +104,10 @@ public class Pattern
         foreach (var (idx, handActions) in Frames().Index())
         {
             var ballActionsThisFrame = GetInvolvedBallActions(handActions);
-            foreach (var (ball, actions) in ballActionsThisFrame)
+            if (!AreFrameActionsValid(ballActionsThisFrame, out errorMessage))
             {
-                var positionCount = actions.Count;
-                if (positionCount != 1)
-                {
-                    errorMessage = $"Ball {ball} appeared in {actions.Count} different hands on frame {idx}";
-                    state = null;
-                    return false;
-                }
+                state = null;
+                return false;
             }
             foreach (var ballFound in ballActionsThisFrame.Keys.Intersect(ballsLeftToFind))
             {
