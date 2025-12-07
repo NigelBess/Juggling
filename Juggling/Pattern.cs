@@ -228,7 +228,7 @@ public class Pattern
         {
             for (var i = 1; i < frameCount; i++)
             {
-                var frame = frames[throwAction.FrameIndex + i];
+                var frame = frames[(throwAction.FrameIndex + i) % frameCount];
                 var ball = throwAction.Ball!.Value;
                 if (!TryGetBallAction(frame, throwAction.Ball!.Value, out var catchAction))
                 {

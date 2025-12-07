@@ -26,7 +26,7 @@ public static class Program
                     null,
                     HandAction.Catch(0,0,1),
                     null,
-                    HandAction.Catch(0,0,1),
+                    HandAction.Throw(0,0,1),
                 ]
             }
         }
