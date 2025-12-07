@@ -6,10 +6,10 @@ namespace JugglingTest;
 public sealed class PatternTests
 {
     [TestMethod]
-    public void ValidPattern1_IsValid() => TestSingleHandPatternValidity(ValidPattern1(), true);
+    public void SingleBallToss_IsValid() => TestSingleHandPatternValidity(SingleBallToss(), true);
 
     [TestMethod]
-    public void ValidPattern2_IsValid() => TestSingleHandPatternValidity(ValidPattern2(), true);
+    public void SingleHandTwoBallJuggle_IsValid() => TestSingleHandPatternValidity(ValidPattern2(), true);
 
     [TestMethod]
     public void InvalidPattern1_IsInvalid() => TestSingleHandPatternValidity(InvalidPattern1(), false);
@@ -28,7 +28,7 @@ public sealed class PatternTests
 
     public static IEnumerable<object[]> GetPatterns()
     {
-        yield return new object[] { ValidPattern1(), true };
+        yield return new object[] { SingleBallToss(), true };
         yield return new object[] { ValidPattern2(), true };
         yield return new object[] { InvalidPattern1(), false };
         yield return new object[] { InvalidPattern2(), false };
@@ -64,7 +64,7 @@ public sealed class PatternTests
         ]
     };
 
-    private static HandPattern ValidPattern1() => new()
+    private static HandPattern SingleBallToss() => new()
     {
         Actions =
          [
