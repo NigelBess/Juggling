@@ -42,26 +42,5 @@ public class BallThrow
         return globalFrameIndex - Throw.FrameIndex;
     }
 
-    /// <summary>
-    /// Solves the physics of the throw
-    /// </summary>
-    /// <param name="gravity">Gravity in distance units per frame squared. Expected to be positive for downward gravity.</param>
-    public ThrowSolution GenerateSolution(float gravity)
-    {
-        var catchPos = Catch.Position;
-        var throwPos = Throw.Position;
-        var positionChange = catchPos - throwPos;
-        var time = (float)FrameCount;
-        var verticalInitialVelocity = (catchPos.Y - throwPos.Y - gravity * time * time / 2) / time;
-        var horizontalInitialVelocity = (catchPos.X - throwPos.X) / time;
-
-        return new()
-        {
-            Gravity = gravity,
-            Time = FrameCount,
-            StartVelocity = new(x: horizontalInitialVelocity, y: (float)verticalInitialVelocity),
-            StartPosition = throwPos,
-        };
-    }
-
+    public ThrowSolution ComputeSolution(float gravityDistancePerFrameSquared) => new(this, gravityDistancePerFrameSquared);
 }
