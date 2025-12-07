@@ -11,10 +11,10 @@ public class PatternVisualization
     private readonly Vector2 _screenDims;
     private readonly float _dtSeconds;
     private readonly float _secondsPerFrame;
-    private readonly int _ballSize;
+    private readonly float _ballSizePixels;
     private readonly Vector2 _worldToScreenOffset;
     private readonly float _scaleModifier;
-    private const int pixelBuffer = 25;
+    private const int _pixelBuffer = 25;
     private Dictionary<int, Color> _ballColors = new() {
             { 0, Color.Red},
             { 1, Color.Green},
@@ -25,7 +25,7 @@ public class PatternVisualization
             { 6, Color.White},
             { 7, Color.Beige},
         };
-    public PatternVisualization(Pattern pattern, Vector2? screenDims = null, float dtSeconds = 0.01f, float secondsPerFrame = 0.5f, int ballSize = 10, float gravityPixelPerSecondSquared = -900)
+    public PatternVisualization(Pattern pattern, Vector2? screenDims = null, float dtSeconds = 0.01f, float secondsPerFrame = 0.5f, int ballSize = 11, float gravityPixelPerSecondSquared = -900)
     {
         _pattern = pattern;
         var throws = pattern.GenerateThrows().ToList();
@@ -35,29 +35,47 @@ public class PatternVisualization
         _screenDims = screenDims ?? new(1000, 1000);
         _dtSeconds = dtSeconds;
         _secondsPerFrame = secondsPerFrame;
-        _ballSize = ballSize;
-        ComputeScreenTransformation(throwSolutions.Values, out var scaleModifier, out var offset);
+
+        ComputeScreenTransformation(throwSolutions.Values, _screenDims, ballSize, out var scaleModifier, out var offset);
         _scaleModifier = scaleModifier;
+        _ballSizePixels = ballSize * scaleModifier;
         _worldToScreenOffset = offset;
     }
-    private (AxisRange X, AxisRange Y) GenerateBoundingRectangle(IEnumerable<ThrowSolution> throws)
+    private static (AxisRange X, AxisRange Y) GenerateBoundingRectangle(IEnumerable<ThrowSolution> throws)
     {
         var throwXs = throws.SelectMany(t => t.XRange().Extremes());
         var throwYs = throws.SelectMany(t => t.YRange().Extremes());
         return (new(throwXs), new(throwYs));
     }
-    private void ComputeScreenTransformation(IEnumerable<ThrowSolution> throws, out float scaleModifier, out Vector2 worldToScreenOffset)
+    private static void ComputeScreenTransformation(
+        IEnumerable<ThrowSolution> throws,
+        Vector2 screenDims,
+        float ballRadiusWorld,
+        out float scaleModifier,
+        out Vector2 worldToScreenOffset)
     {
         var (xRange, yRange) = GenerateBoundingRectangle(throws);
-        var dims = _screenDims;
 
-        scaleModifier = Math.Min(dims.X / (xRange.Width + pixelBuffer), dims.Y / (yRange.Width + pixelBuffer));
+        // Expand world extents by the ball radius on all sides
+        var expandedWidthX = xRange.Width + 2 * ballRadiusWorld;
+        var expandedWidthY = yRange.Width + 2 * ballRadiusWorld;
 
-        var screenCenter = dims / 2;
+        // Fixed pixel padding on each side
+        var paddingPixels = _pixelBuffer;
+        var innerDims = screenDims - new Vector2(2 * paddingPixels, 2 * paddingPixels);
+
+        scaleModifier = Math.Min(
+            innerDims.X / expandedWidthX,
+            innerDims.Y / expandedWidthY
+        );
+
+        var screenCenter = screenDims / 2;
         var centroid = new Vector2(xRange.Center, yRange.Center) * scaleModifier;
         worldToScreenOffset = screenCenter + centroid;
     }
-    private Vector2 ToRaylibPos(Vector2 originalPos) => -originalPos * _scaleModifier + _worldToScreenOffset;
+    private Vector2 ToRaylibPos(Vector2 originalPos)
+    => -originalPos * _scaleModifier + _worldToScreenOffset;
+
     private Color GetBallColor(int n)
     {
         if (!_ballColors.TryGetValue(n, out var color))
@@ -89,7 +107,7 @@ public class PatternVisualization
                 if (throwLocalTimeFrames is null) continue;
                 var ballPos = solution.GetPosition(throwLocalTimeFrames.Value);
                 ballPos = ToRaylibPos(ballPos);
-                Raylib.DrawCircle((int)ballPos.X, (int)ballPos.Y, _ballSize, GetBallColor(ballThrow.Ball));
+                Raylib.DrawCircle((int)ballPos.X, (int)ballPos.Y, _ballSizePixels, GetBallColor(ballThrow.Ball));
             }
             Raylib.EndDrawing();
             Thread.Sleep((int)(dt * 1000));
