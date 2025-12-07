@@ -1,8 +1,28 @@
-﻿using Raylib_cs;
+﻿using Juggling;
+using Raylib_cs;
 using System.Numerics;
 
 
 Raylib.InitWindow(800, 600, "Juggling");
+var ballColors = new Dictionary<int, Color>() {
+    { 0, Color.Red},
+    { 0, Color.Green},
+    { 0, Color.Blue},
+    { 0, Color.Yellow},
+    { 0, Color.Purple},
+    { 0, Color.Orange},
+};
+var pattern = new Pattern()
+{
+    Hands = new() {
+        new(){
+            Actions = {
+                null,
+                new(){ }
+            }
+        }
+    }
+};
 while (!Raylib.WindowShouldClose())
 {
     // update juggling state here

@@ -1,8 +1,6 @@
-﻿using System.Numerics;
+﻿namespace Juggling;
 
-namespace Juggling;
-
-internal class BallThrow
+public class BallThrow
 {
     public required int LoopFrameCount { get; init; }
     public required HandAction Throw { get; init; }
@@ -30,7 +28,7 @@ internal class BallThrow
     /// Accounts for "around-the-corner" throws (over looped pattern boundaries) if applicable.<br/>
     /// Fractional frames are allowed <br/>
     /// </summary>
-    public double? GetLocalFrameIndex(double globalFrameIndex)
+    public double? GetLocalFrameIndex(float globalFrameIndex)
     {
         if (globalFrameIndex > Catch.FrameIndex && globalFrameIndex < Throw.FrameIndex) return null;
         if (IsAroundTheCorner)
@@ -42,15 +40,26 @@ internal class BallThrow
     }
 
     /// <summary>
-    /// Solves for the start velocity
+    /// Solves the physics of the throw
     /// </summary>
-    public ThrowSolution GenerateSolution(Vector2 gravity)
+    /// <param name="gravity">Gravity in distance units per frame squared. Expected to be positive for downward gravity.</param>
+    public ThrowSolution GenerateSolution(float gravity)
     {
         var catchPos = Catch.Position;
         var throwPos = Throw.Position;
         var positionChange = catchPos - throwPos;
+        var time = (float)FrameCount;
+        var verticalInitialVelocity = (catchPos.Y - throwPos.Y + gravity * time * time / 2) / time;
+        var horizontalInitialVelocity = (catchPos.X - throwPos.X) / time;
 
-        return new();
+        return new()
+        {
+            Gravity = gravity,
+            Time = FrameCount,
+            StartVelocity = new(x: horizontalInitialVelocity, y: (float)verticalInitialVelocity),
+            StartPosition = throwPos,
+            EndPosition = catchPos,
+        };
     }
 
 }

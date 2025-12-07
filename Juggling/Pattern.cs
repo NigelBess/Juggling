@@ -4,7 +4,7 @@ namespace Juggling;
 
 public class Pattern
 {
-    public int Length
+    public int FrameCount
     {
         get
         {
@@ -14,6 +14,8 @@ public class Pattern
         }
     }
     public List<HandPattern> Hands { get; init; } = new();
+
+    private IEnumerable<HandAction> AllActions => Hands.SelectMany(h => h.Actions.WhereNotNull());
     public void ResetLength(int length)
     {
         foreach (var hand in Hands) hand.ResetLength(length);
@@ -38,8 +40,7 @@ public class Pattern
         foreach (var frameActions in Frames())
         {
             var ballStates = new Dictionary<int, int?>();
-            var ballMultiActionsThisFrame = GetInvolvedBallActions(frameActions);
-            if (!TryValidateBallActions(ballMultiActionsThisFrame, out var ballActionsThisFrame, out errorMessage))
+            if (!TryGetBallActions(frameActions, out var ballActionsThisFrame, out errorMessage))
             {
                 states = null;
                 return false;
@@ -119,7 +120,7 @@ public class Pattern
     public IEnumerable<List<HandAction?>> Frames()
     {
         NormalizeLength();
-        for (var i = 0; i < Length; i++)
+        for (var i = 0; i < FrameCount; i++)
         {
             var handActions = Hands.Select(h => h.Actions[i]).ToList();
             yield return handActions;
@@ -136,6 +137,7 @@ public class Pattern
             .ToDictionary(g => g.Key, g => g.ToList());
     }
 
+
     public void PopulateIndices()
     {
         foreach (var (idx, hand) in Hands.Index())
@@ -145,9 +147,10 @@ public class Pattern
         }
     }
 
-    private bool TryValidateBallActions(Dictionary<int, List<HandAction>> ballActionsThisFrame, [NotNullWhen(returnValue: true)] out Dictionary<int, HandAction>? ballActions, [NotNullWhen(returnValue: false)] out string? errorMessage)
+    private bool TryGetBallActions(List<HandAction?> frame, [NotNullWhen(returnValue: true)] out Dictionary<int, HandAction>? ballActions, [NotNullWhen(returnValue: false)] out string? errorMessage)
     {
         var singleActions = new Dictionary<int, HandAction>();
+        var ballActionsThisFrame = GetInvolvedBallActions(frame);
         foreach (var (ball, actions) in ballActionsThisFrame)
         {
             if (!actions.TryGetSingle(out var action))
@@ -163,16 +166,24 @@ public class Pattern
         return true;
     }
 
+    private bool TryGetBallAction(List<HandAction?> frame, int ball, [NotNullWhen(returnValue: true)] out HandAction? ballAction)
+    {
+        if (!TryGetBallActions(frame, out var ballActionsThisFrame, out var errorMessage))
+        {
+            throw new InvalidOperationException(errorMessage);
+        }
+        return ballActionsThisFrame.TryGetValue(ball, out ballAction);
+    }
+
 
     private bool TryGetInitialState([NotNullWhen(returnValue: true)] out RoughState? state, [NotNullWhen(returnValue: false)] out string? errorMessage)
     {
         PopulateIndices();
         var ballsLeftToFind = AllBalls();
         var ballLocations = new Dictionary<int, int?>();
-        foreach (var (idx, handActions) in Frames().Index())
+        foreach (var (idx, frameActions) in Frames().Index())
         {
-            var ballMultiActionsThisFrame = GetInvolvedBallActions(handActions);
-            if (!TryValidateBallActions(ballMultiActionsThisFrame, out var ballActionsThisFrame, out errorMessage))
+            if (!TryGetBallActions(frameActions, out var ballActionsThisFrame, out errorMessage))
             {
                 state = null;
                 return false;
@@ -204,5 +215,35 @@ public class Pattern
     private HashSet<int> AllBalls()
     {
         return Hands.SelectMany(h => h.Actions.WhereNotNull().Select(a => a.Ball).WhereNotNull()).ToHashSet();
+    }
+
+    public IEnumerable<BallThrow> GenerateThrows()
+    {
+        PopulateIndices();
+        if (!TryGetStateSequence(out _, out var error)) throw new InvalidOperationException(error);
+        var throwActions = AllActions.Where(a => a.ActionType == HandActionType.Throw);
+        var frames = Frames().ToList();
+        var frameCount = FrameCount;
+        foreach (var throwAction in throwActions)
+        {
+            for (var i = 1; i < frameCount; i++)
+            {
+                var frame = frames[throwAction.FrameIndex + i];
+                var ball = throwAction.Ball!.Value;
+                if (!TryGetBallAction(frame, throwAction.Ball!.Value, out var catchAction))
+                {
+                    continue;
+                }
+                if (catchAction.ActionType != HandActionType.Catch) throw new InvalidOperationException($"Attempting to {catchAction.ActionType} a ball {ball} using hand {catchAction.HandIndex} on frame {catchAction.FrameIndex} but the ball is in the air.");
+                yield return new()
+                {
+                    Catch = catchAction,
+                    Throw = throwAction,
+                    LoopFrameCount = frameCount,
+                };
+                break;
+            }
+        }
+
     }
 }
