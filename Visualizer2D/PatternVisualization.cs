@@ -7,11 +7,13 @@ namespace Visualizer2D;
 public class PatternVisualization
 {
     private readonly Pattern _pattern;
-    private readonly IReadOnlyDictionary<BallThrow, ThrowSolution> _throwSolutions;
+    private readonly IReadOnlyList<BallThrow> _throws;
+    private readonly IReadOnlyList<IMotionSequence> _hands;
     private readonly Vector2 _screenDims;
     private readonly float _dtSeconds;
     private readonly float _secondsPerFrame;
     private readonly float _ballSizePixels;
+    private readonly Vector2 _handSizePixels;
     private readonly Vector2 _worldToScreenOffset;
     private readonly float _scaleModifier;
     private const int _pixelBuffer = 25;
@@ -25,20 +27,25 @@ public class PatternVisualization
             { 6, Color.White},
             { 7, Color.Beige},
         };
-    public PatternVisualization(Pattern pattern, Vector2? screenDims = null, float dtSeconds = 0.01f, float secondsPerFrame = 0.5f, int ballSize = 11, float gravityPixelPerSecondSquared = -900)
+    public PatternVisualization(Pattern pattern, Vector2? screenDims = null, float dtSeconds = 0.01f, float secondsPerFrame = 0.5f, int ballSize = 11, Vector2? handSize = null, float gravityDistancePerFrameSquared = -900)
     {
+        handSize ??= new(18, 3);
         _pattern = pattern;
-        var throws = pattern.GenerateThrows().ToList();
-        var gravityPixelPerFramesSquared = gravityPixelPerSecondSquared * secondsPerFrame * secondsPerFrame;
-        var throwSolutions = throws.ToDictionary(t => t, elementSelector: t => t.ComputeSolution(gravityPixelPerFramesSquared));
-        _throwSolutions = throwSolutions;
+
+        var gravityDistancePerFramesSquared = gravityDistancePerFrameSquared * secondsPerFrame * secondsPerFrame;
+        pattern.PopulateAllMotion(gravityDistancePerFramesSquared);
+        var throws = pattern.PopulatedThrows.ToList();
+        _throws = throws;
+        _hands = pattern.GetHandMotions(gravityDistancePerFramesSquared);
         _screenDims = screenDims ?? new(1000, 1000);
         _dtSeconds = dtSeconds;
         _secondsPerFrame = secondsPerFrame;
 
-        ComputeScreenTransformation(throwSolutions.Values, _screenDims, ballSize, out var scaleModifier, out var offset);
+        ComputeScreenTransformation(throws.Select(t => t.PopulatedSolution!), _screenDims, ballSize, out var scaleModifier, out var offset);
         _scaleModifier = scaleModifier;
+
         _ballSizePixels = ballSize * scaleModifier;
+        _handSizePixels = handSize.Value * scaleModifier;
         _worldToScreenOffset = offset;
     }
     private static (AxisRange X, AxisRange Y) GenerateBoundingRectangle(IEnumerable<ThrowSolution> throws)
@@ -101,13 +108,19 @@ public class PatternVisualization
             Raylib.BeginDrawing();
             Raylib.ClearBackground(Color.Black);
 
-            foreach (var (ballThrow, solution) in _throwSolutions)
+            foreach (var ballThrow in _throws)
             {
                 var throwLocalTimeFrames = ballThrow.GetLocalFrameIndex(timeInFrames);
                 if (throwLocalTimeFrames is null) continue;
-                var ballPos = solution.GetPosition(throwLocalTimeFrames.Value);
+                var ballPos = ballThrow.PopulatedSolution!.GetPosition(throwLocalTimeFrames.Value);
                 ballPos = ToRaylibPos(ballPos);
                 Raylib.DrawCircle((int)ballPos.X, (int)ballPos.Y, _ballSizePixels, GetBallColor(ballThrow.Ball));
+            }
+            foreach (var hand in _hands)
+            {
+                var handPos = hand.GetPosition(timeInFrames);
+                handPos = ToRaylibPos(handPos);
+                Raylib.DrawRectangle((int)handPos.X, (int)handPos.Y, (int)_handSizePixels.X, (int)_handSizePixels.Y, Color.Beige);
             }
             Raylib.EndDrawing();
             Thread.Sleep((int)(dt * 1000));

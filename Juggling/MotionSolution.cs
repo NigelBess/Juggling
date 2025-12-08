@@ -24,7 +24,7 @@ internal class MotionSolution
         _d = y0;
     }
 
-    public static MotionSolution FromMotionEndpoints(HandMotionEndpoint start, HandMotionEndpoint end, Func<Vector2, float> indexSelector, float duration) => new(indexSelector(start.Position), indexSelector(start.Velocity), indexSelector(end.Position), indexSelector(end.Velocity), duration)
+    public static MotionSolution FromMotionEndpoints(HandMotionEndpoint start, HandMotionEndpoint end, Func<Vector2, float> indexSelector, float duration) => new(indexSelector(start.Position), indexSelector(start.Velocity), indexSelector(end.Position), indexSelector(end.Velocity), duration);
 
     public float GetPosition(float t)
     {

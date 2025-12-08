@@ -35,6 +35,20 @@ public class HandPattern
         }
     }
 
+    public IMotionSequence GenerateMotionSequence()
+    {
+        var actions = Actions.WhereNotNull().ToList();
+        var actionCount = actions.Count;
+        var motions = new List<HandMotion>(actionCount);
+        for (var i = 0; i < actionCount; i++)
+        {
+            var start = actions[i];
+            var end = actions[(i + 1) % actionCount];
+            motions.Add(new(start.HandMotionEndpoint!, end.HandMotionEndpoint!, actionCount));
+        }
+        return new HandMotionSequence(motions);
+    }
+
     public static implicit operator HandPattern(HandAction?[] actions) =>
     new() { Actions = actions };
     public static HandPattern FromActions(IEnumerable<HandAction?> actions) => new() { Actions = actions.ToArray() };
