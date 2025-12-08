@@ -335,7 +335,7 @@ public class Pattern
         }
     }
 
-    public List<IMotionSequence> GetHandMotions(float gravityDistancePerFrameSquared)
+    public List<HandMotionSequence> GetHandMotions(float gravityDistancePerFrameSquared)
     {
         PopulateIndices();
         PopulateAllMotion(gravityDistancePerFrameSquared);

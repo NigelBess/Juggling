@@ -35,7 +35,7 @@ public class HandPattern
         }
     }
 
-    public IMotionSequence GenerateMotionSequence()
+    public HandMotionSequence GenerateMotionSequence()
     {
         var actions = Actions.WhereNotNull().ToList();
         var actionCount = actions.Count;

@@ -28,8 +28,8 @@ public class ThrowSolutionTests
         var ballThrow = GenerateOneBallToss();
         var solution = ballThrow.ComputeSolution(-10);
         var throwPos = solution.GetPosition(0);
-        TestHelpers.AssertV2Equality(throwPos, ballThrow.Throw.Position, "Start");
-        TestHelpers.AssertV2Equality(solution.EndPosition, ballThrow.Catch.Position, "End");
+        TestHelpers.AssertEquality(throwPos, ballThrow.Throw.Position, additionalInfo: "Start");
+        TestHelpers.AssertEquality(solution.EndPosition, ballThrow.Catch.Position, additionalInfo: "End");
     }
 
     [TestMethod]

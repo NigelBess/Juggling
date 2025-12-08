@@ -3,7 +3,6 @@ using Visualizer2D;
 
 public static class Program
 {
-
     public static void Main()
     {
         var pattern = Patterns.StandardOddBallPattern(3);

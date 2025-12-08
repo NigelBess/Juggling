@@ -1,15 +1,24 @@
-﻿using System.Numerics;
+﻿using System.Collections;
+using System.Numerics;
 
 namespace Juggling;
 
-internal class HandMotionSequence : IMotionSequence
+public class HandMotionSequence : IMotionSequence, IEnumerable<HandMotion>
 {
     private List<HandMotion> _subMotions;
     public HandMotionSequence(IEnumerable<HandMotion> subMotions)
     {
         _subMotions = subMotions.ToList();
     }
+
+    public IEnumerator<HandMotion> GetEnumerator() => _subMotions.GetEnumerator();
+
     public Vector2 GetPosition(float timeInFrames) => GetSubMotion(timeInFrames, out var localTime).GetPosition(localTime);
+
+    IEnumerator IEnumerable.GetEnumerator()
+    {
+        return GetEnumerator();
+    }
 
     private HandMotion GetSubMotion(float timeInFrames, out float localTime)
     {
