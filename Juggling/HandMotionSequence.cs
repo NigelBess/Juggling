@@ -20,7 +20,7 @@ public class HandMotionSequence : IMotionSequence, IEnumerable<HandMotion>
         return GetEnumerator();
     }
 
-    private HandMotion GetSubMotion(float timeInFrames, out float localTime)
+    public HandMotion GetSubMotion(float timeInFrames, out float localTime)
     {
         var elapsed = 0;
         foreach (var handMotion in _subMotions)

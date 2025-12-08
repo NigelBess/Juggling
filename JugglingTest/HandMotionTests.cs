@@ -30,4 +30,21 @@ public class HandMotionTests
         }
     }
 
+    [TestMethod]
+    public void TestSubMotionIndexing()
+    {
+        var pattern = Patterns.StandardOddBallPattern(3);
+        var handMotions = pattern.GetHandMotions(-100);
+        var dtFrames = 0.01f;
+        for (float tFrames = 0; tFrames < pattern.FrameCount; tFrames += dtFrames)
+        {
+            foreach (var motion in handMotions)
+            {
+                var subMotion = motion.GetSubMotion(tFrames, out var localTime);
+                Assert.IsGreaterThanOrEqualTo(0, localTime);
+                Assert.IsLessThan(subMotion.DurationFrames, localTime);
+            }
+        }
+    }
+
 }
